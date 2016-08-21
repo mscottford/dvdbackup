@@ -50,51 +50,10 @@ void init_i18n() {
 	textdomain(PACKAGE);
 }
 
-
-int main(void) {
-
-	int do_mirror = 0;
-
-	/* Because of copy protection you normally want to skip
-	 * the defect sectors. To speed things up we skip multiblocks.
-	 */
-	read_error_strategy_t errorstrat = STRATEGY_SKIP_MULTIBLOCK;
-
-	int return_code = 0;
-
-	/* DVD Video device */
-	char* dvd = "/dev/dvd";
-
-
-	/* Title of the DVD */
-	char title_name[33] = "";
-
-	/* Targer dir */
-	char* targetdir = ".";
-
+void read_title_name(dvd_reader_t* _dvd, char* dvd, char* title_name, char* targetdir) {
 	/* Temp filename,dirname */
 	char targetname[PATH_MAX];
 	struct stat fileinfo;
-
-	/* The DVD main structure */
-	dvd_reader_t* _dvd = NULL;
-
-	init_i18n();
-
-	/* TODO: do isdigit check */
-
-	do_mirror = 1;
-	progress = 1;
-	dvd = "/dev/rdisk2";
-	targetdir = "./test/post";
-
-	aspect = 0;
-
-	_dvd = DVDOpen(dvd);
-	if (!_dvd) {
-		fprintf(stderr,_("Cannot open specified device %s - check your DVD device\n"), dvd);
-		exit(-1);
-	}
 
 	if (DVDGetTitleName(dvd,title_name) != 0) {
 		fprintf(stderr,_("You must provide a title name when you read your DVD-Video structure direct from the HD\n"));
@@ -151,24 +110,49 @@ int main(void) {
 			exit(-1);
 		}
 	}
+}
 
 
-#ifdef DEBUG
-	fprintf(stderr,"After dirs\n");
-#endif
+int main(void) {
 
+	int return_code = 0;
 
-	if(do_mirror) {
-		if ( DVDMirror(_dvd, targetdir, title_name, errorstrat) != 0 ) {
-			fprintf(stderr, _("Mirror of DVD failed\n"));
-			return_code = -1;
-		} else {
-			return_code = 0;
-		}
+	/* DVD Video device */
+	char* dvd = "/dev/dvd";
+
+	/* Title of the DVD */
+	char title_name[33] = "";
+
+	/* Targer dir */
+	char* targetdir = ".";
+
+	/* The DVD main structure */
+	dvd_reader_t* _dvd = NULL;
+
+	init_i18n();
+
+	/* TODO: do isdigit check */
+
+	progress = 1;
+	dvd = "/dev/rdisk2";
+	targetdir = "./test/post";
+
+	aspect = 0;
+
+	_dvd = DVDOpen(dvd);
+	if (!_dvd) {
+		fprintf(stderr,_("Cannot open specified device %s - check your DVD device\n"), dvd);
+		exit(-1);
 	}
-#ifdef DEBUG
-	fprintf(stderr,"After Mirror\n");
-#endif
+
+	read_title_name(_dvd, dvd, title_name, targetdir);
+
+	if ( DVDMirror(_dvd, targetdir, title_name, STRATEGY_SKIP_MULTIBLOCK) != 0 ) {
+		fprintf(stderr, _("Mirror of DVD failed\n"));
+		return_code = -1;
+	} else {
+		return_code = 0;
+	}
 
 	DVDClose(_dvd);
 	exit(return_code);
