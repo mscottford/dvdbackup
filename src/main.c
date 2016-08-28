@@ -18,12 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <config.h>
 #include "dvdbackup.h"
-
-/* internationalisation */
-#include "gettext.h"
-#define _(String) gettext(String)
 
 /* C standard libraries */
 #include <limits.h>
@@ -44,24 +39,18 @@
 #include <getopt.h>
 
 
-void init_i18n() {
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
-}
-
 void read_title_name(dvd_reader_t* _dvd, char* dvd, char* title_name, char* targetdir) {
 	/* Temp filename,dirname */
 	char targetname[PATH_MAX];
 	struct stat fileinfo;
 
 	if (DVDGetTitleName(dvd,title_name) != 0) {
-		fprintf(stderr,_("You must provide a title name when you read your DVD-Video structure direct from the HD\n"));
+		fprintf(stderr, "You must provide a title name when you read your DVD-Video structure direct from the HD\n");
 		DVDClose(_dvd);
 		exit(1);
 	}
 	if (strstr(title_name, "DVD_VIDEO") != NULL) {
-		fprintf(stderr,_("The DVD-Video title on the disk is DVD_VIDEO, which is too generic; please provide a title with the -n switch\n"));
+		fprintf(stderr, "The DVD-Video title on the disk is DVD_VIDEO, which is too generic; please provide a title with the -n switch\n");
 		DVDClose(_dvd);
 		exit(2);
 	}
@@ -70,11 +59,11 @@ void read_title_name(dvd_reader_t* _dvd, char* dvd, char* title_name, char* targ
 
 	if (stat(targetname, &fileinfo) == 0) {
 		if (! S_ISDIR(fileinfo.st_mode)) {
-			fprintf(stderr,_("The target directory is not valid; it may be an ordinary file.\n"));
+			fprintf(stderr, "The target directory is not valid; it may be an ordinary file.\n");
 		}
 	} else {
 		if (mkdir(targetname, 0777) != 0) {
-			fprintf(stderr,_("Failed creating target directory %s\n"), targetname);
+			fprintf(stderr, "Failed creating target directory %s\n", targetname);
 			perror("");
 			DVDClose(_dvd);
 			exit(-1);
@@ -85,11 +74,11 @@ void read_title_name(dvd_reader_t* _dvd, char* dvd, char* title_name, char* targ
 
 	if (stat(targetname, &fileinfo) == 0) {
 		if (! S_ISDIR(fileinfo.st_mode)) {
-			fprintf(stderr,_("The title directory is not valid; it may be an ordinary file.\n"));
+			fprintf(stderr, "The title directory is not valid; it may be an ordinary file.\n");
 		}
 	} else {
 		if (mkdir(targetname, 0777) != 0) {
-			fprintf(stderr,_("Failed creating title directory\n"));
+			fprintf(stderr, "Failed creating title directory\n");
 			perror("");
 			DVDClose(_dvd);
 			exit(-1);
@@ -100,11 +89,11 @@ void read_title_name(dvd_reader_t* _dvd, char* dvd, char* title_name, char* targ
 
 	if (stat(targetname, &fileinfo) == 0) {
 		if (! S_ISDIR(fileinfo.st_mode)) {
-			fprintf(stderr,_("The VIDEO_TS directory is not valid; it may be an ordinary file.\n"));
+			fprintf(stderr, "The VIDEO_TS directory is not valid; it may be an ordinary file.\n");
 		}
 	} else {
 		if (mkdir(targetname, 0777) != 0) {
-			fprintf(stderr,_("Failed creating VIDEO_TS directory\n"));
+			fprintf(stderr, "Failed creating VIDEO_TS directory\n");
 			perror("");
 			DVDClose(_dvd);
 			exit(-1);
@@ -129,8 +118,6 @@ int main(void) {
 	/* The DVD main structure */
 	dvd_reader_t* _dvd = NULL;
 
-	init_i18n();
-
 	/* TODO: do isdigit check */
 
 	progress = 1;
@@ -141,14 +128,14 @@ int main(void) {
 
 	_dvd = DVDOpen(dvd);
 	if (!_dvd) {
-		fprintf(stderr,_("Cannot open specified device %s - check your DVD device\n"), dvd);
+		fprintf(stderr, "Cannot open specified device %s - check your DVD device\n", dvd);
 		exit(-1);
 	}
 
 	read_title_name(_dvd, dvd, title_name, targetdir);
 
 	if ( DVDMirror(_dvd, targetdir, title_name, STRATEGY_SKIP_MULTIBLOCK) != 0 ) {
-		fprintf(stderr, _("Mirror of DVD failed\n"));
+		fprintf(stderr,  "Mirror of DVD failed\n");
 		return_code = -1;
 	} else {
 		return_code = 0;
