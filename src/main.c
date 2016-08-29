@@ -19,6 +19,7 @@
  */
 
 #include "dvdbackup.h"
+#include "config.h"
 
 /* C standard libraries */
 #include <limits.h>
@@ -121,7 +122,7 @@ int main(void) {
 	/* TODO: do isdigit check */
 
 	progress = 1;
-	dvd = "/dev/rdisk2";
+	dvd = "/dev/rdisk3";
 	targetdir = "./test/post";
 
 	aspect = 0;
