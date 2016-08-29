@@ -34,7 +34,7 @@ Boolean MyReadSector( int fileDescriptor )
         // kCDSectorSizeCDDA is defined in IOCDTypes.h as 2352.
         blockSize = kCDSectorSizeCDDA;
     }
-    buffer = malloc( blockSize );
+    buffer = (char*) malloc( blockSize );
     numBytes = read( fileDescriptor, buffer, blockSize );
     free( buffer );
     return numBytes == blockSize ? true : false;
@@ -80,7 +80,7 @@ kern_return_t MyGetDeviceFilePath( io_iterator_t mediaIterator,
             // buffer cache.
             strcat( deviceFilePath, "r");
             devPathLength = strlen( deviceFilePath );
-            if ( CFStringGetCString( deviceFilePathAsCFString,
+            if ( CFStringGetCString( (CFStringRef) deviceFilePathAsCFString,
                                      deviceFilePath + devPathLength,
                                      maxPathSize - devPathLength,
                                      kCFStringEncodingASCII ) )
@@ -123,7 +123,7 @@ kern_return_t MyFindEjectableCDMedia( io_iterator_t *mediaIterator )
     }
     kernResult = IOServiceGetMatchingServices( masterPort,
                                 classesToMatch, mediaIterator );
-    if ( (kernResult != KERN_SUCCESS) || (*mediaIterator == NULL) )
+    if ( (kernResult != KERN_SUCCESS) || (*mediaIterator == 0) )
         printf( "No ejectable CD media found.\n kernResult = %d\n",
                     kernResult );
     return kernResult;

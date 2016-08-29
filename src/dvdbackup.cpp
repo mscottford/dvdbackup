@@ -441,25 +441,25 @@ static titles_info_t * DVDGetInfo(dvd_reader_t * _dvd) {
 	titles_info->number_of_titles = titles;
 
 
-	chapter_chapter_array = malloc(titles * sizeof(int));
-	title_set_chapter_array = malloc(titles * sizeof(int));
+	chapter_chapter_array = (int*) malloc(titles * sizeof(int));
+	title_set_chapter_array = (int*) malloc(titles * sizeof(int));
 
 	/*currently not used in the guessing */
-	angle_angle_array = malloc(titles * sizeof(int));
-	title_set_angle_array = malloc(titles * sizeof(int));
+	angle_angle_array = (int*) malloc(titles * sizeof(int));
+	title_set_angle_array = (int*) malloc(titles * sizeof(int));
 
 
-	subpicture_sub_array = malloc(title_sets * sizeof(int));
-	title_set_sub_array = malloc(title_sets * sizeof(int));
+	subpicture_sub_array = (int*) malloc(title_sets * sizeof(int));
+	title_set_sub_array = (int*) malloc(title_sets * sizeof(int));
 
-	audio_audio_array = malloc(title_sets * sizeof(int));
-	title_set_audio_array = malloc(title_sets * sizeof(int));
+	audio_audio_array = (int*) malloc(title_sets * sizeof(int));
+	title_set_audio_array = (int*) malloc(title_sets * sizeof(int));
 
-	size_size_array = malloc(title_sets * sizeof(int));
-	title_set_size_array = malloc(title_sets * sizeof(int));
+	size_size_array = (int*) malloc(title_sets * sizeof(int));
+	title_set_size_array = (int*) malloc(title_sets * sizeof(int));
 
-	channels_channel_array = malloc(title_sets * sizeof(int));
-	title_set_channel_array = malloc(title_sets * sizeof(int));
+	channels_channel_array = (int*) malloc(title_sets * sizeof(int));
+	title_set_channel_array = (int*) malloc(title_sets * sizeof(int));
 
 	/* Check mallocs */
 	if(!titles_info->titles || !chapter_chapter_array || !title_set_chapter_array ||
@@ -1827,7 +1827,7 @@ int DVDMirrorTitles(dvd_reader_t * _dvd, char * targetdir,char * title_name, int
  * 25648 Bytes.
  */
 static void format_filesize(off_t filesize, char* result) {
-	char* prefix = "";
+	char* prefix = (char*) "";
 	double size = (double)filesize;
 	int prefix_count = 0;
 
@@ -1837,17 +1837,17 @@ static void format_filesize(off_t filesize, char* result) {
 	}
 
 	if(prefix_count == 1) {
-		prefix = "Ki";
+		prefix = (char*) "Ki";
 	} else if(prefix_count == 2) {
-		prefix = "Mi";
+		prefix = (char*) "Mi";
 	} else if(prefix_count == 3) {
-		prefix = "Gi";
+		prefix = (char*) "Gi";
 	} else if(prefix_count == 4) {
-		prefix = "Ti";
+		prefix = (char*) "Ti";
 	} else if(prefix_count == 5) {
-		prefix = "Pi";
+		prefix = (char*) "Pi";
 	} else if(prefix_count == 6) {
-		prefix = "Ei";
+		prefix = (char*) "Ei";
 	}
 
 	sprintf(result, "%7.2f %sB", size, prefix);

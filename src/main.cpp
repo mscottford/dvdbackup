@@ -108,13 +108,13 @@ int main(void) {
 	int return_code = 0;
 
 	/* DVD Video device */
-	char* dvd = "/dev/dvd";
+	char* dvd = (char*)"/dev/dvd";
 
 	/* Title of the DVD */
 	char title_name[33] = "";
 
 	/* Targer dir */
-	char* targetdir = ".";
+	char* targetdir = (char*)".";
 
 	/* The DVD main structure */
 	dvd_reader_t* _dvd = NULL;
@@ -122,8 +122,8 @@ int main(void) {
 	/* TODO: do isdigit check */
 
 	progress = 1;
-	dvd = "/dev/rdisk3";
-	targetdir = "./test/post";
+	dvd = (char*)"/dev/rdisk3";
+	targetdir = (char*)"./test/post";
 
 	aspect = 0;
 
