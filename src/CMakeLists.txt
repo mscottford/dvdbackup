@@ -1,8 +1,8 @@
 set(SOURCE_FILES
-        main.c
-        dvdbackup.c
+        main.cpp
+        dvdbackup.cpp
         config.h
-        optical_drive_finder.c
+        optical_drive_finder.cpp
 )
 
 add_executable(dvdbackup ${SOURCE_FILES})
