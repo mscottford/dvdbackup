@@ -51,6 +51,7 @@ int MyOpenDrive( const char *deviceFilePath )
         printf( "Error opening device %s: \n", deviceFilePath );
         perror( NULL );
     }
+
     return fileDescriptor;
 }
 
@@ -92,7 +93,6 @@ kern_return_t MyGetDeviceFilePath( io_iterator_t mediaIterator,
         }
     }
     IOObjectRelease( nextMedia );
-
     return kernResult;
 }
 
@@ -110,7 +110,7 @@ kern_return_t MyFindEjectableCDMedia( io_iterator_t *mediaIterator )
         return kernResult;
     }
     // CD media are instances of class kIOCDMediaClass.
-    classesToMatch = IOServiceMatching( kIOCDMediaClass );
+    classesToMatch = IOServiceMatching( kIOMediaClass );
     if ( classesToMatch == NULL )
         printf( "IOServiceMatching returned a NULL dictionary.\n" );
     else
@@ -126,24 +126,31 @@ kern_return_t MyFindEjectableCDMedia( io_iterator_t *mediaIterator )
     if ( (kernResult != KERN_SUCCESS) || (*mediaIterator == 0) )
         printf( "No ejectable CD media found.\n kernResult = %d\n",
                     kernResult );
+
     return kernResult;
 }
 
 // this function was main() in the original source listing
-int opticalDriveFinder( void )
+int main( void )
 {
+    int status = 0;
+
     kern_return_t kernResult;
     io_iterator_t mediaIterator;
     char deviceFilePath[ MAXPATHLEN ];
 
     kernResult = MyFindEjectableCDMedia( &mediaIterator );
-    if ( kernResult != KERN_SUCCESS )
-        return 0;
+    if ( kernResult != KERN_SUCCESS ) {
+        printf( "MyFindEjectableCDMedia returned %d\n", kernResult );
+        return kernResult;
+    }
 
     kernResult = MyGetDeviceFilePath( mediaIterator, deviceFilePath,
                     sizeof( deviceFilePath ) );
-    if ( kernResult != KERN_SUCCESS )
-        return 0;
+    if ( kernResult != KERN_SUCCESS ) {
+        printf( "MyGetDeviceFilePath returned %d\n", kernResult );
+        return kernResult;
+    }
 
     // Now open the device we found, read a sector, and close the device.
     if ( deviceFilePath[ 0 ] != '\0' )
@@ -155,18 +162,22 @@ int opticalDriveFinder( void )
         {
             if ( MyReadSector( fileDescriptor ) )
                 printf( "Sector read successfully.\n" );
-            else
-                printf( "Could not read sector.\n" );
+            else {
+                printf("Could not read sector.\n");
+                status = 1;
+            }
 
             MyCloseDrive( fileDescriptor );
             printf( "Device closed.\n" );
         }
     }
-    else
-        printf( "No ejectable CD media found.\n" );
+    else {
+        printf("No ejectable CD media found.\n");
+        status = 1;
+    }
 
     // Release the iterator.
     IOObjectRelease( mediaIterator );
 
-    return 0;
+    return status;
 }

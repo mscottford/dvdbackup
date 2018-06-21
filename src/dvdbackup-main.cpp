@@ -122,7 +122,7 @@ int main(void) {
 	/* TODO: do isdigit check */
 
 	progress = 1;
-	dvd = (char*)"/dev/rdisk3";
+	dvd = (char*)"/dev/rdisk1";
 	targetdir = (char*)"./test/post";
 
 	aspect = 0;
